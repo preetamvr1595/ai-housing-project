@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Housing Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+        }
+        .container {
+            width: 700px;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0 15px 0;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #eaeaea;
+        }
+        .best {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>AI Model for Housing Price Prediction</h2>
+
+    <form method="POST" action="/">
+        <label>House Size (sq ft)</label>
+        <input type="number" name="size" required>
+
+        <label>Bedrooms</label>
+        <input type="number" name="bedrooms" required>
+
+        <label>House Age (years)</label>
+        <input type="number" name="age" required>
+
+        <label>Location Score (1–10)</label>
+        <input type="number" name="location" min="1" max="10" required>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if comparison %}
+        <h3>🔍 Model Comparison</h3>
+        <table>
+            <tr>
+                <th>Model</th>
+                <th>Predicted Output</th>
+                <th>Performance Metric</th>
+                <th>Why this model?</th>
+            </tr>
+            {% for row in comparison %}
+            <tr>
+                <td>{{ row.model }}</td>
+                <td>{{ row.prediction }}</td>
+                <td>{{ row.performance }}</td>
+                <td>{{ row.reason }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <p class="best">
+            Best Model Selected: {{ best_model }}
+        </p>
+
+        <p>
+            <b>Model Selection Logic:</b>
+            Logistic Regression is selected as the best model because it provides the
+            highest decision accuracy for identifying high-value and low-value houses,
+            which is crucial for real-world real estate decision-making.
+        </p>
+    {% endif %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+.env
+node_modules/
+__pycache__/
+*.pkl
+*.scaler
+test_mongo.py
+.venv/
+env/
+venv/
+.pytest_cache/
+.vscode/
+.idea/
+*.log
