@@ -5,3 +5,4 @@ joblib
 numpy
 gunicorn
 python-dotenv
+sklearn
