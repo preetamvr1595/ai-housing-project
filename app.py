@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 from pymongo import MongoClient
 from datetime import datetime
 import joblib
 import numpy as np
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+app = Flask(__name__, static_folder='frontend/dist', template_folder='frontend/dist')
+CORS(app)  # Enable CORS for all routes (useful for development)
 
 # ======================
 # MongoDB Connection
@@ -46,81 +46,13 @@ BEST_MODEL_REASON = {
     "Logistic Regression": "Highest decision accuracy and reliability"
 }
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        # User input
-        size = float(request.form["size"])
-        bedrooms = int(request.form["bedrooms"])
-        age = int(request.form["age"])
-        location = int(request.form["location"])
-
-        user_input = np.array([[size, bedrooms, age, location]])
-
-        # -------- Linear Regression --------
-        lr_price = linear_model.predict(user_input)[0]
-
-        # -------- SVR --------
-        svr_scaled = svr_scaler.transform(user_input)
-        svr_price = svr_model.predict(svr_scaled)[0]
-
-        # -------- Logistic Regression --------
-        log_scaled = logistic_scaler.transform(user_input)
-        log_pred = logistic_model.predict(log_scaled)[0]
-        category = "High Price House" if log_pred == 1 else "Low Price House"
-
-        # Decide best model (decision-based priority)
-        best_model = "Logistic Regression"
-
-        # ======================
-        # Save to MongoDB
-        # ======================
-        try:
-            collection.insert_one({
-                "size": size,
-                "bedrooms": bedrooms,
-                "age": age,
-                "location": location,
-                "linear_prediction": round(lr_price, 2),
-                "svr_prediction": round(svr_price, 2),
-                "category": category,
-                "best_model": best_model,
-                "source": "HTML_FORM",
-                "created_at": datetime.utcnow()
-            })
-        except Exception as e:
-            print(f"MongoDB Error: {e}")
-
-
-        # Comparison table data
-        comparison = [
-            {
-                "model": "Linear Regression",
-                "prediction": f"₹ {round(lr_price,2)} Lakhs",
-                "performance": MODEL_ACCURACY["Linear Regression"],
-                "reason": BEST_MODEL_REASON["Linear Regression"]
-            },
-            {
-                "model": "SVR",
-                "prediction": f"₹ {round(svr_price,2)} Lakhs",
-                "performance": MODEL_ACCURACY["SVR"],
-                "reason": BEST_MODEL_REASON["SVR"]
-            },
-            {
-                "model": "Logistic Regression",
-                "prediction": category,
-                "performance": MODEL_ACCURACY["Logistic Regression"],
-                "reason": BEST_MODEL_REASON["Logistic Regression"]
-            }
-        ]
-
-        return render_template(
-            "index.html",
-            comparison=comparison,
-            best_model=best_model
-        )
-
-    return render_template("index.html")
+@app.route("/", defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return render_template('index.html')
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -181,4 +113,5 @@ def predict():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)

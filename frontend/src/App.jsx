@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Home, 
-  TrendingUp, 
-  BarChart3, 
-  MapPin, 
-  Bed, 
-  Calendar, 
+import {
+  Home,
+  TrendingUp,
+  BarChart3,
+  MapPin,
+  Bed,
+  Calendar,
   Layers,
   Sparkles
 } from 'lucide-react';
@@ -43,7 +43,7 @@ function App() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/predict', {
+      const response = await fetch('/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -80,44 +80,44 @@ function App() {
           <form onSubmit={handlePredict}>
             <div className="input-group">
               <label><Home size={16} /> Size (sqft)</label>
-              <input 
-                type="number" 
-                name="size" 
-                value={formData.size} 
-                onChange={handleInputChange} 
-                required 
+              <input
+                type="number"
+                name="size"
+                value={formData.size}
+                onChange={handleInputChange}
+                required
               />
             </div>
             <div className="input-group">
               <label><Bed size={16} /> Bedrooms</label>
-              <input 
-                type="number" 
-                name="bedrooms" 
-                value={formData.bedrooms} 
-                onChange={handleInputChange} 
-                required 
+              <input
+                type="number"
+                name="bedrooms"
+                value={formData.bedrooms}
+                onChange={handleInputChange}
+                required
               />
             </div>
             <div className="input-group">
               <label><Calendar size={16} /> House Age (Years)</label>
-              <input 
-                type="number" 
-                name="age" 
-                value={formData.age} 
-                onChange={handleInputChange} 
-                required 
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleInputChange}
+                required
               />
             </div>
             <div className="input-group">
               <label><MapPin size={16} /> Location Rating (1-10)</label>
-              <input 
-                type="number" 
-                name="location" 
-                min="1" 
-                max="10" 
-                value={formData.location} 
-                onChange={handleInputChange} 
-                required 
+              <input
+                type="number"
+                name="location"
+                min="1"
+                max="10"
+                value={formData.location}
+                onChange={handleInputChange}
+                required
               />
             </div>
             <button type="submit" className="btn-predict" disabled={loading}>
@@ -131,7 +131,7 @@ function App() {
           <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <TrendingUp className="text-secondary" /> Analysis Results
           </h2>
-          
+
           {!results ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
               <BarChart3 size={64} style={{ marginBottom: '1rem', opacity: 0.5 }} />
@@ -158,7 +158,7 @@ function App() {
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
                     <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} />
                     <YAxis stroke="var(--text-muted)" fontSize={12} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: '8px' }}
                       itemStyle={{ color: 'white' }}
                     />
